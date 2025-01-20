@@ -109,18 +109,18 @@ public class ImageController {
     /**
      * Upload image(s) and save to database in encrypted format
      *
-     * @param files
+     * @param file
      * @return
      */
-    @PostMapping("/files")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile[] files) throws IOException {
-        logger.info("Arrived count of file(s): {}", files.length);
+    @PostMapping(path = "/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadImage(@RequestPart(value = "file", required = false) MultipartFile[] file) throws IOException {
+        logger.info("Arrived count of file(s): {}", file.length);
 
         List<String> doneNames = new ArrayList<>();
         List<String> failNames = new ArrayList<>();
         List<String> overNames = new ArrayList<>();
 
-        Arrays.stream(files).forEach(multipartFile -> {
+        Arrays.stream(file).forEach(multipartFile -> {
                 try {
                     if (!ImageHelper.isOversize(multipartFile.getBytes(), multipartFile.getContentType(), maxWidth, maxHeight)) {
                         doneNames.add(imageService.saveImage(multipartFile));
